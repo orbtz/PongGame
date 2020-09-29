@@ -55,6 +55,7 @@ LRESULT CALLBACK windows_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lP
 }
 
 int WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,	int nShowCmd) {
+	ShowCursor(FALSE);
 
 	// Create Window Class
 	WNDCLASS window_class = {};
@@ -66,7 +67,16 @@ int WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,	int 
 	RegisterClass(&window_class);
 
 	// Render the Window
-	HWND window = CreateWindow(window_class.lpszClassName, L"First Game", WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 880, 420, 0, 0, hInstance, 0);
+	HWND window = CreateWindow(window_class.lpszClassName, L"Pong Study Tutorial", WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 880, 420, 0, 0, hInstance, 0);
+	
+	{
+		//Fullscreen
+		SetWindowLong(window, GWL_STYLE, GetWindowLong(window, GWL_STYLE) & ~WS_OVERLAPPEDWINDOW);
+		MONITORINFO mi = { sizeof(mi) };
+		GetMonitorInfo(MonitorFromWindow(window, MONITOR_DEFAULTTOPRIMARY), &mi);
+		SetWindowPos(window, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top, mi.rcMonitor.right - mi.rcMonitor.left, mi.rcMonitor.bottom - mi.rcMonitor.top, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+	}
+	
 	HDC hdc = GetDC(window);
 
 	Input input = {};
@@ -107,6 +117,10 @@ input.buttons[b].is_down = is_down;\
 						process_button(BUTTON_DOWN, VK_DOWN);
 						process_button(BUTTON_W, 'W');
 						process_button(BUTTON_S, 'S');
+
+						process_button(BUTTON_LEFT, 'A');
+						process_button(BUTTON_RIGHT, 'D');
+						process_button(BUTTON_ENTER,VK_RETURN);
 					}
 
 				} break;
